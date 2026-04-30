@@ -1,54 +1,1371 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Formulário</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background-color: #f4f4f9; }
-        form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 300px; }
-        div { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        button { width: 100%; padding: 10px; background-color: #2ea44f; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #2c974b; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#001F6B">
+<title>FNI · SENAC RO</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --navy:      #001F6B;
+  --blue:      #0038C8;
+  --blue2:     #2563EB;
+  --accent:    #F59E0B;
+  --accent2:   #FCD34D;
+  --surface:   #F0F4FF;
+  --white:     #FFFFFF;
+  --ink:       #0F172A;
+  --ink2:      #334155;
+  --muted:     #64748B;
+  --line:      #E2E8F0;
+  --red:       #DC2626;
+  --red-bg:    #FEF2F2;
+  --green:     #16A34A;
+  --green-bg:  #F0FDF4;
+  --amber-bg:  #FFFBEB;
+  --r:         16px;
+  --r2:        12px;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--navy);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+/* ── SHELL ── */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 430px;
+  margin: 0 auto;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── STATUS BAR ── */
+.statusbar {
+  background: var(--navy);
+  padding: 12px 20px 0;
+  flex-shrink: 0;
+}
+.sb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sb-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sb-badge {
+  background: var(--accent);
+  color: var(--navy);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: .04em;
+}
+.sb-title {
+  color: rgba(255,255,255,.9);
+  font-size: 13px;
+  font-weight: 600;
+}
+.sb-proto {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--accent2);
+  letter-spacing: .06em;
+}
+
+/* ── PROGRESS ── */
+.progress-track {
+  display: flex;
+  gap: 4px;
+  padding: 12px 20px 14px;
+  background: var(--navy);
+}
+.prog-seg {
+  flex: 1;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255,255,255,.2);
+  transition: background .3s;
+}
+.prog-seg.done   { background: rgba(255,255,255,.5); }
+.prog-seg.active { background: var(--accent); }
+
+/* ── SCROLL AREA ── */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: none;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ── SECTION HEADER ── */
+.sec-head {
+  background: var(--navy);
+  padding: 0 20px 24px;
+  border-radius: 0 0 24px 24px;
+  margin-bottom: 20px;
+}
+.sec-step {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent2);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sec-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border-radius: var(--r);
+  margin: 0 16px 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+}
+
+/* ── FIELDS ── */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+
+.lbl {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.req { color: var(--red); font-size: 14px; line-height: 1; }
+.hint { font-size: 12px; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
+
+input[type=text], input[type=tel], input[type=date], input[type=time], select, textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r2);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--white);
+  -webkit-appearance: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--blue2);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+}
+textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px;
+  cursor: pointer;
+}
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* ── PILL OPTIONS ── */
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r2);
+  cursor: pointer;
+  transition: all .15s;
+  background: var(--white);
+  -webkit-user-select: none;
+}
+.pill:active { transform: scale(.98); }
+.pill-radio {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.pill-check {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--line);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.pill input { display: none; }
+.pill-body { flex: 1; }
+.pill-label { font-size: 14px; font-weight: 500; color: var(--ink); line-height: 1.3; }
+.pill-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+.pill.sel {
+  border-color: var(--blue2);
+  background: #EFF6FF;
+}
+.pill.sel .pill-radio {
+  background: var(--blue2);
+  border-color: var(--blue2);
+}
+.pill.sel .pill-radio::after {
+  content: '';
+  width: 7px; height: 7px;
+  background: #fff;
+  border-radius: 50%;
+}
+.pill.sel .pill-check {
+  background: var(--blue2);
+  border-color: var(--blue2);
+}
+.pill.sel .pill-check::after {
+  content: '✓';
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+.pill.sel-warn { border-color: #D97706; background: var(--amber-bg); }
+.pill.sel-danger { border-color: var(--red); background: var(--red-bg); }
+
+/* ── SEVERITY CARDS ── */
+.sev-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sev-card {
+  padding: 14px;
+  border-radius: var(--r2);
+  border: 2px solid var(--line);
+  cursor: pointer;
+  transition: all .15s;
+}
+.sev-card:active { transform: scale(.97); }
+.sev-card.full { grid-column: 1 / -1; }
+.sev-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: 8px; }
+.sev-name { font-size: 13px; font-weight: 700; color: var(--ink2); }
+.sev-desc { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+.sev-card.inc .sev-dot { background: #6366F1; }
+.sev-card.lev .sev-dot { background: #16A34A; }
+.sev-card.mod .sev-dot { background: #D97706; }
+.sev-card.gra .sev-dot { background: #DC2626; }
+.sev-card.fat .sev-dot { background: #7F1D1D; }
+
+.sev-card.inc.sel { border-color: #6366F1; background: #EEF2FF; }
+.sev-card.lev.sel { border-color: #16A34A; background: var(--green-bg); }
+.sev-card.mod.sel { border-color: #D97706; background: var(--amber-bg); }
+.sev-card.gra.sel { border-color: #DC2626; background: var(--red-bg); }
+.sev-card.fat.sel { border-color: #7F1D1D; background: #FEE2E2; }
+
+/* ── ALERT ── */
+.alert {
+  border-radius: var(--r2);
+  padding: 13px 14px;
+  margin-top: 10px;
+  display: none;
+}
+.alert.danger { background: var(--red-bg); border: 1.5px solid #FECACA; }
+.alert.warn   { background: var(--amber-bg); border: 1.5px solid #FDE68A; }
+.alert-row { display: flex; gap: 8px; align-items: flex-start; }
+.alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.alert-title { font-size: 13px; font-weight: 700; }
+.alert.danger .alert-title { color: #991B1B; }
+.alert.warn   .alert-title { color: #92400E; }
+.alert-body   { font-size: 12px; margin-top: 3px; line-height: 1.5; }
+.alert.danger .alert-body { color: #7F1D1D; }
+.alert.warn   .alert-body { color: #78350F; }
+
+/* ── COND ── */
+.cond {
+  margin-top: 10px;
+  padding: 14px;
+  background: var(--surface);
+  border-radius: var(--r2);
+  border-left: 3px solid var(--blue2);
+  display: none;
+}
+.cond-lbl {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--blue2);
+  margin-bottom: 12px;
+}
+
+/* ── UPLOAD ── */
+.upload {
+  border: 2px dashed var(--line);
+  border-radius: var(--r2);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .15s;
+  background: var(--surface);
+}
+.upload:hover, .upload:active { border-color: var(--blue2); background: #EFF6FF; }
+.upload input { display: none; }
+.upload-icon { font-size: 28px; margin-bottom: 6px; display: block; }
+.upload-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.upload-text strong { color: var(--blue2); }
+.flist { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+.fitem {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px;
+  background: #EFF6FF;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 500;
+}
+.frem { cursor: pointer; color: var(--muted); font-size: 16px; padding: 0 2px; }
+.frem:hover { color: var(--red); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  flex-shrink: 0;
+  padding: 12px 16px;
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 10px;
+}
+.btn {
+  flex: 1;
+  padding: 15px;
+  border-radius: var(--r2);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.btn:active { transform: scale(.97); }
+.btn-ghost {
+  background: var(--surface);
+  color: var(--ink2);
+  border: 1.5px solid var(--line);
+  flex: 0 0 52px;
+  font-size: 18px;
+  padding: 15px 0;
+}
+.btn-next  { background: var(--blue); color: #fff; }
+.btn-next:hover  { background: var(--navy); }
+.btn-send  { background: var(--accent); color: var(--navy); }
+.btn-send:hover  { background: #E08B00; }
+
+/* ── CONFIRMAÇÃO ── */
+#conf-screen {
+  display: none;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 430px;
+  margin: 0 auto;
+  background: var(--white);
+  overflow-y: auto;
+}
+.conf-top {
+  background: linear-gradient(160deg, var(--navy) 0%, var(--blue) 100%);
+  padding: 48px 28px 36px;
+  text-align: center;
+}
+.conf-check {
+  width: 72px; height: 72px;
+  background: rgba(255,255,255,.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 32px;
+}
+.conf-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.conf-sub   { font-size: 14px; color: rgba(255,255,255,.7); line-height: 1.6; }
+.conf-body  { padding: 24px 20px; }
+.conf-proto {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+.conf-proto-lbl { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.conf-proto-num {
+  font-family: monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: .05em;
+}
+.conf-steps { margin-bottom: 20px; }
+.conf-step {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.5;
+}
+.conf-step:last-child { border-bottom: none; }
+.cs-dot {
+  width: 8px; height: 8px;
+  background: var(--blue2);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.conf-export {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+}
+.conf-export-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.conf-export-sub   { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+.conf-btns { display: flex; gap: 8px; }
+.btn-exp {
+  flex: 1; padding: 11px;
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none;
+  transition: all .15s;
+}
+.btn-exp:active { transform: scale(.97); }
+.btn-exp-primary { background: var(--blue); color: #fff; }
+.btn-exp-ghost   { background: var(--white); color: var(--ink2); border: 1.5px solid var(--line); }
+.btn-novo {
+  width: 100%;
+  padding: 15px;
+  border-radius: var(--r2);
+  background: var(--surface);
+  color: var(--ink2);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 600;
+  border: 1.5px solid var(--line);
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
+
+@media (min-width: 431px) {
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  #app, #conf-screen { box-shadow: 0 24px 80px rgba(0,0,0,.25); border-radius: 36px; overflow: hidden; }
+}
+@media print {
+  .bottom-nav, .statusbar, .progress-track { display: none !important; }
+  body, html { overflow: visible; }
+  #app { height: auto; }
+  .scroll-area { overflow: visible; }
+}
+</style>
 </head>
 <body>
 
-    <form id="meu-formulario">
-    <h2>Cadastro para Planilha</h2>
-    <div>
-        <label>Nome:</label>
-        <input type="text" name="nome" required>
-    </div>
-    <div>
-        <label>Idade:</label>
-        <input type="number" name="idade" required>
-    </div>
-    <button type="submit" id="btn-enviar">Enviar para Planilha</button>
-</form>
+<!-- ── APP SHELL ── -->
+<div id="app">
 
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <div class="sb-row">
+      <div class="sb-logo">
+        <span class="sb-badge">SENAC RO</span>
+        <span class="sb-title">SST · Notificação</span>
+      </div>
+      <span class="sb-proto" id="proto-top">—</span>
+    </div>
+    <div class="progress-track" id="prog-segs">
+      <div class="prog-seg active" id="ps1"></div>
+      <div class="prog-seg" id="ps2"></div>
+      <div class="prog-seg" id="ps3"></div>
+      <div class="prog-seg" id="ps4"></div>
+      <div class="prog-seg" id="ps5"></div>
+      <div class="prog-seg" id="ps6"></div>
+    </div>
+  </div>
+
+  <!-- SCROLL BODY -->
+  <div class="scroll-area" id="scroll">
+
+    <!-- ── SEC 1 ── -->
+    <div id="sec1">
+      <div class="sec-head">
+        <div class="sec-step">Etapa 1 de 6</div>
+        <div class="sec-title">Quem está notificando?</div>
+      </div>
+      <div class="card">
+        <div class="field">
+          <div class="lbl">Seu nome <span class="req">*</span></div>
+          <input type="text" id="f1-nome" placeholder="Nome completo" autocomplete="name">
+        </div>
+        <div class="field">
+          <div class="lbl">Seu papel no ocorrido <span class="req">*</span></div>
+          <div class="opts" id="rg-papel">
+            <div class="pill" onclick="radio(this,'papel')"><div class="pill-radio"></div><input type="radio" name="papel"><div class="pill-body"><div class="pill-label">Gestor(a) da unidade</div></div></div>
+            <div class="pill" onclick="radio(this,'papel')"><div class="pill-radio"></div><input type="radio" name="papel"><div class="pill-body"><div class="pill-label">Membro da CIPA / Rep. de SST</div></div></div>
+            <div class="pill" onclick="radio(this,'papel')"><div class="pill-radio"></div><input type="radio" name="papel"><div class="pill-body"><div class="pill-label">Testemunha do ocorrido</div></div></div>
+            <div class="pill" onclick="radio(this,'papel')"><div class="pill-radio"></div><input type="radio" name="papel"><div class="pill-body"><div class="pill-label">O próprio colaborador</div></div></div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="lbl">Seu telefone <span class="req">*</span></div>
+          <input type="tel" id="f1-tel" placeholder="(69) 9 0000-0000">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEC 2 ── -->
+    <div id="sec2" class="hidden">
+      <div class="sec-head">
+        <div class="sec-step">Etapa 2 de 6</div>
+        <div class="sec-title">Colaborador envolvido</div>
+      </div>
+      <div class="card">
+        <div class="field">
+          <div class="lbl">Nome do colaborador <span class="req">*</span></div>
+          <input type="text" id="f2-nome" placeholder="Nome completo">
+        </div>
+        <div class="row2">
+          <div class="field">
+            <div class="lbl">CPF <span class="req">*</span></div>
+            <div class="hint">Obrigatório para o S-2210</div>
+            <input type="text" id="f2-cpf" placeholder="000.000.000-00" maxlength="14" oninput="fmtCPF(this)">
+          </div>
+          <div class="field">
+            <div class="lbl">Matrícula <span class="req">*</span></div>
+            <div class="hint">Obrigatório para o S-2210</div>
+            <input type="text" id="f2-mat" placeholder="Ex: 00123">
+          </div>
+        </div>
+        <div class="field">
+          <div class="lbl">Unidade <span class="req">*</span></div>
+          <select id="f2-unidade">
+            <option value="">Selecione...</option>
+            <option>SENAC Porto Velho</option>
+            <option>SENAC Ariquemes</option>
+            <option>SENAC Jaru</option>
+            <option>SENAC Ji-Paraná</option>
+            <option>SENAC Cacoal</option>
+            <option>SENAC Pimenta Bueno</option>
+            <option>SENAC Vilhena</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <div class="lbl">Cargo / Função <span class="req">*</span></div>
+            <input type="text" id="f2-funcao" placeholder="Ex: Assistente">
+          </div>
+          <div class="field">
+            <div class="lbl">Tempo na função</div>
+            <select id="f2-tempo">
+              <option value="">—</option>
+              <option>Menos de 3 meses</option>
+              <option>3 a 12 meses</option>
+              <option>Mais de 1 ano</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEC 3 ── -->
+    <div id="sec3" class="hidden">
+      <div class="sec-head">
+        <div class="sec-step">Etapa 3 de 6</div>
+        <div class="sec-title">Quando e onde aconteceu?</div>
+      </div>
+      <div class="card">
+        <div class="row2">
+          <div class="field">
+            <div class="lbl">Data <span class="req">*</span></div>
+            <input type="date" id="f3-data">
+          </div>
+          <div class="field">
+            <div class="lbl">Hora <span class="req">*</span></div>
+            <input type="time" id="f3-hora">
+          </div>
+        </div>
+        <div class="field">
+          <div class="lbl">Tipo de ocorrência <span class="req">*</span></div>
+          <div class="opts" id="rg-tipo">
+            <div class="pill" onclick="radio(this,'tipo')"><div class="pill-radio"></div><input type="radio" name="tipo"><div class="pill-body"><div class="pill-label">Acidente típico</div><div class="pill-sub">No trabalho ou nas dependências da empresa</div></div></div>
+            <div class="pill" onclick="radio(this,'tipo')"><div class="pill-radio"></div><input type="radio" name="tipo"><div class="pill-body"><div class="pill-label">Acidente de trajeto</div><div class="pill-sub">No percurso casa–trabalho sem desvio por motivo pessoal</div></div></div>
+            <div class="pill" onclick="radio(this,'tipo')"><div class="pill-radio"></div><input type="radio" name="tipo"><div class="pill-body"><div class="pill-label">Incidente / Quase acidente</div><div class="pill-sub">Sem lesão, mas com potencial de causar dano</div></div></div>
+            <div class="pill" onclick="radio(this,'tipo')"><div class="pill-radio"></div><input type="radio" name="tipo"><div class="pill-body"><div class="pill-label">Doença ocupacional</div><div class="pill-sub">Com possível relação às atividades laborais</div></div></div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="lbl">Local exato <span class="req">*</span></div>
+          <div class="hint">Sala, corredor, estacionamento, endereço da rua...</div>
+          <input type="text" id="f3-local" placeholder="Ex: Recepção · Unidade Porto Velho">
+        </div>
+        <div class="field">
+          <div class="lbl">Atividade realizada no momento <span class="req">*</span></div>
+          <input type="text" id="f3-ativ" placeholder="Ex: Transportando caixas, atendendo aluno...">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEC 4 ── -->
+    <div id="sec4" class="hidden">
+      <div class="sec-head">
+        <div class="sec-step">Etapa 4 de 6</div>
+        <div class="sec-title">O que aconteceu?</div>
+      </div>
+      <div class="card">
+        <div class="field">
+          <div class="lbl">Como aconteceu? <span class="req">*</span></div>
+          <div class="hint">Escolha o mais próximo. O TST classifica tecnicamente depois.</div>
+          <select id="f4-como">
+            <option value="">Selecione...</option>
+            <optgroup label="Queda">
+              <option>Queda de própria altura (tropeçou, escorregou)</option>
+              <option>Queda de altura (escada, andaime, telhado)</option>
+              <option>Queda de objeto sobre o colaborador</option>
+            </optgroup>
+            <optgroup label="Impacto / Colisão">
+              <option>Bateu contra algo (móvel, parede, equipamento)</option>
+              <option>Colisão de veículo / acidente de trânsito</option>
+              <option>Foi atingido por objeto em movimento</option>
+            </optgroup>
+            <optgroup label="Esforço físico">
+              <option>Esforço ao levantar, puxar ou carregar peso</option>
+              <option>Movimento repetitivo ou postura inadequada</option>
+            </optgroup>
+            <optgroup label="Contato com energia ou substância">
+              <option>Corte ou perfuração por objeto pontiagudo</option>
+              <option>Queimadura (calor, fogo, vapor)</option>
+              <option>Choque elétrico</option>
+              <option>Contato com substância química</option>
+              <option>Aprisionamento ou compressão entre objetos</option>
+            </optgroup>
+            <optgroup label="Outros">
+              <option>Agressão ou violência no trabalho</option>
+              <option>Picada ou mordida de animal</option>
+              <option>Mal-estar súbito no trabalho</option>
+              <option>Outro — descreverei abaixo</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field">
+          <div class="lbl">Descreva o que aconteceu <span class="req">*</span></div>
+          <div class="hint">Conte a sequência do início ao fim, com o máximo de detalhes.</div>
+          <textarea id="f4-desc" placeholder="Por volta das 07h30, o colaborador deslocava-se quando..."></textarea>
+        </div>
+        <div class="field">
+          <div class="lbl">EPI em uso no momento</div>
+          <div class="opts" id="rg-epi">
+            <div class="pill" onclick="radio(this,'epi');toggleCond('c-epi',false)"><div class="pill-radio"></div><input type="radio" name="epi"><div class="pill-body"><div class="pill-label">Sim — EPI adequado</div></div></div>
+            <div class="pill" onclick="radio(this,'epi');toggleCond('c-epi',true)"><div class="pill-radio"></div><input type="radio" name="epi"><div class="pill-body"><div class="pill-label">Parcialmente — não todos os necessários</div></div></div>
+            <div class="pill" onclick="radio(this,'epi');toggleCond('c-epi',true)"><div class="pill-radio"></div><input type="radio" name="epi"><div class="pill-body"><div class="pill-label">Não estava usando EPI</div></div></div>
+            <div class="pill" onclick="radio(this,'epi');toggleCond('c-epi',false)"><div class="pill-radio"></div><input type="radio" name="epi"><div class="pill-body"><div class="pill-label">Não se aplica</div></div></div>
+          </div>
+          <div class="cond" id="c-epi">
+            <div class="cond-lbl">EPI necessário</div>
+            <input type="text" id="f4-epi" placeholder="Ex: Capacete, botina, luvas...">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEC 5 ── -->
+    <div id="sec5" class="hidden">
+      <div class="sec-head">
+        <div class="sec-step">Etapa 5 de 6</div>
+        <div class="sec-title">Lesão e gravidade</div>
+      </div>
+      <div class="card">
+        <div class="field">
+          <div class="lbl">Houve lesão? <span class="req">*</span></div>
+          <div class="opts" id="rg-lesao">
+            <div class="pill" onclick="radio(this,'lesao');toggleCond('c-lesao',true)"><div class="pill-radio"></div><input type="radio" name="lesao"><div class="pill-body"><div class="pill-label">Sim, houve lesão</div></div></div>
+            <div class="pill" onclick="radio(this,'lesao');toggleCond('c-lesao',false)"><div class="pill-radio"></div><input type="radio" name="lesao"><div class="pill-body"><div class="pill-label">Não — sem lesão (incidente)</div></div></div>
+          </div>
+          <div class="cond" id="c-lesao">
+            <div class="cond-lbl">Detalhes da lesão</div>
+            <div class="field">
+              <div class="lbl" style="margin-bottom:8px">Parte do corpo atingida</div>
+              <div class="opts">
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Cabeça / rosto / olhos"><div class="pill-body"><div class="pill-label">Cabeça / rosto / olhos</div></div></div>
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Pescoço"><div class="pill-body"><div class="pill-label">Pescoço</div></div></div>
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Ombro / braço / cotovelo"><div class="pill-body"><div class="pill-label">Ombro / braço / cotovelo</div></div></div>
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Mão / punho / dedos"><div class="pill-body"><div class="pill-label">Mão / punho / dedos</div></div></div>
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Tórax / costas / coluna"><div class="pill-body"><div class="pill-label">Tórax / costas / coluna</div></div></div>
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Abdome / quadril"><div class="pill-body"><div class="pill-label">Abdome / quadril</div></div></div>
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Coxa / joelho / perna"><div class="pill-body"><div class="pill-label">Coxa / joelho / perna</div></div></div>
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Pé / tornozelo / artelhos"><div class="pill-body"><div class="pill-label">Pé / tornozelo / artelhos</div></div></div>
+                <div class="pill" onclick="check(this)"><div class="pill-check"></div><input type="checkbox" name="corpo" value="Múltiplas regiões"><div class="pill-body"><div class="pill-label">Múltiplas regiões</div></div></div>
+              </div>
+            </div>
+            <div class="field" style="margin-top:14px">
+              <div class="lbl">Tipo de lesão</div>
+              <select id="f5-tipo">
+                <option value="">Selecione...</option>
+                <option>Corte / ferida</option>
+                <option>Contusão / hematoma</option>
+                <option>Fratura (suspeita)</option>
+                <option>Luxação / entorse</option>
+                <option>Queimadura</option>
+                <option>Escoriação / abrasão</option>
+                <option>Amputação</option>
+                <option>Mal-estar sem lesão visível</option>
+                <option>Outro</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="lbl">Gravidade <span class="req">*</span></div>
+          <div class="hint">O TST pode reclassificar após a investigação.</div>
+          <div class="sev-wrap">
+            <div class="sev-card inc" onclick="sev(this,'inc')">
+              <div class="sev-dot"></div>
+              <div class="sev-name">Incidente</div>
+              <div class="sev-desc">Sem lesão, mas com potencial</div>
+            </div>
+            <div class="sev-card lev" onclick="sev(this,'lev')">
+              <div class="sev-dot"></div>
+              <div class="sev-name">Leve</div>
+              <div class="sev-desc">Sem afastamento, atend. ambulatorial</div>
+            </div>
+            <div class="sev-card mod" onclick="sev(this,'mod')">
+              <div class="sev-dot"></div>
+              <div class="sev-name">Moderado</div>
+              <div class="sev-desc">Afastamento até 15 dias</div>
+            </div>
+            <div class="sev-card gra" onclick="sev(this,'gra')">
+              <div class="sev-dot"></div>
+              <div class="sev-name">Grave</div>
+              <div class="sev-desc">Hospitalização ou sequela</div>
+            </div>
+            <div class="sev-card fat full" onclick="sev(this,'fat')">
+              <div class="sev-dot"></div>
+              <div class="sev-name">Fatal</div>
+              <div class="sev-desc">Óbito em decorrência do ocorrido</div>
+            </div>
+          </div>
+          <div class="alert danger" id="alert-grave">
+            <div class="alert-row">
+              <div class="alert-icon">⚠️</div>
+              <div>
+                <div class="alert-title">Acione o TST e a CGG por telefone agora</div>
+                <div class="alert-body">Não aguarde o envio deste formulário. Ligue imediatamente e preencha em paralelo.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="lbl">Houve afastamento do trabalho? <span class="req">*</span></div>
+          <div class="hint">Campo obrigatório para o eSocial S-2210 (CAT).</div>
+          <div class="opts" id="rg-afast">
+            <div class="pill" onclick="radio(this,'afast')"><div class="pill-radio"></div><input type="radio" name="afast"><div class="pill-body"><div class="pill-label">Sim — colaborador afastado</div></div></div>
+            <div class="pill" onclick="radio(this,'afast')"><div class="pill-radio"></div><input type="radio" name="afast"><div class="pill-body"><div class="pill-label">Não — retornou ou seguirá trabalhando</div></div></div>
+            <div class="pill" onclick="radio(this,'afast')"><div class="pill-radio"></div><input type="radio" name="afast"><div class="pill-body"><div class="pill-label">Ainda não definido — aguardando avaliação médica</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SEC 6 ── -->
+    <div id="sec6" class="hidden">
+      <div class="sec-head">
+        <div class="sec-step">Etapa 6 de 6</div>
+        <div class="sec-title">Atendimento e evidências</div>
+      </div>
+      <div class="card">
+        <div class="field">
+          <div class="lbl">Atendimento médico</div>
+          <div class="opts" id="rg-atend">
+            <div class="pill" onclick="radio(this,'atend');toggleCond('c-atend',true)"><div class="pill-radio"></div><input type="radio" name="atend"><div class="pill-body"><div class="pill-label">Sim, foi encaminhado</div></div></div>
+            <div class="pill" onclick="radio(this,'atend');toggleCond('c-atend',false)"><div class="pill-radio"></div><input type="radio" name="atend"><div class="pill-body"><div class="pill-label">Não — sem necessidade</div></div></div>
+            <div class="pill" onclick="radio(this,'atend');toggleCond('c-atend',false)"><div class="pill-radio"></div><input type="radio" name="atend"><div class="pill-body"><div class="pill-label">Sendo providenciado</div></div></div>
+          </div>
+          <div class="cond" id="c-atend">
+            <div class="cond-lbl">Local de atendimento</div>
+            <div class="field"><input type="text" id="f6-local-at" placeholder="Hospital, UPA, SAMU..."></div>
+            <div class="row2">
+              <div class="field">
+                <div class="lbl">Internação?</div>
+                <select id="f6-intern"><option value="">—</option><option>Não</option><option>Sim</option><option>Não sei</option></select>
+              </div>
+              <div class="field">
+                <div class="lbl">SAMU / Bombeiros?</div>
+                <select id="f6-samu"><option value="">—</option><option>Não</option><option>Sim</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="lbl">Área isolada?</div>
+          <div class="opts" id="rg-isol">
+            <div class="pill" onclick="radio(this,'isol')"><div class="pill-radio"></div><input type="radio" name="isol"><div class="pill-body"><div class="pill-label">Sim — isolada e preservada</div></div></div>
+            <div class="pill" onclick="radio(this,'isol')"><div class="pill-radio"></div><input type="radio" name="isol"><div class="pill-body"><div class="pill-label">Não foi necessário</div></div></div>
+            <div class="pill" onclick="radio(this,'isol')"><div class="pill-radio"></div><input type="radio" name="isol"><div class="pill-body"><div class="pill-label">Não — risco ainda presente</div><div class="pill-sub">Acione o TST para orientação</div></div></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="lbl">Testemunhas</div>
+          <div class="opts" id="rg-test">
+            <div class="pill" onclick="radio(this,'test');toggleCond('c-test',true)"><div class="pill-radio"></div><input type="radio" name="test"><div class="pill-body"><div class="pill-label">Sim, houve testemunhas</div></div></div>
+            <div class="pill" onclick="radio(this,'test');toggleCond('c-test',false)"><div class="pill-radio"></div><input type="radio" name="test"><div class="pill-body"><div class="pill-label">Não houve</div></div></div>
+          </div>
+          <div class="cond" id="c-test">
+            <div class="cond-lbl">Dados das testemunhas</div>
+            <div class="field"><div class="lbl">Testemunha 1</div><input type="text" id="f6-t1" placeholder="Nome — (69) 9 0000-0000"></div>
+            <div class="field"><div class="lbl">Testemunha 2</div><input type="text" id="f6-t2" placeholder="Nome — (69) 9 0000-0000"></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="lbl">Fotos</div>
+          <div class="hint">Evidências fotográficas são essenciais para a investigação.</div>
+          <label class="upload" for="f6-fotos">
+            <input type="file" id="f6-fotos" multiple accept="image/*,.pdf" onchange="handleFiles(this)">
+            <span class="upload-icon">📷</span>
+            <div class="upload-text"><strong>Toque para adicionar fotos</strong><br>JPG · PNG · PDF — até 5 arquivos</div>
+          </label>
+          <div class="flist" id="flist"></div>
+        </div>
+
+        <div class="field">
+          <div class="lbl">Observações adicionais</div>
+          <textarea id="f6-obs" placeholder="Qualquer informação relevante não coberta acima..."></textarea>
+        </div>
+      </div>
+
+      <!-- Espaço extra para não sumir atrás do nav -->
+      <div style="height:16px"></div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav" id="bnav">
+    <button class="btn btn-ghost" id="btn-back" onclick="back()" style="display:none">←</button>
+    <button class="btn btn-next"  id="btn-next" onclick="next()">Continuar</button>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ── CONFIRMAÇÃO ── -->
+<div id="conf-screen">
+  <div class="conf-top">
+    <div class="conf-check">✓</div>
+    <div class="conf-title">Notificação enviada</div>
+    <div class="conf-sub">O TST foi acionado e tem até 24h para iniciar a investigação. Guarde o protocolo abaixo.</div>
+  </div>
+  <div class="conf-body">
+    <div class="conf-proto">
+      <div class="conf-proto-lbl">Número de protocolo</div>
+      <div class="conf-proto-num" id="conf-num">—</div>
+    </div>
+    <div class="conf-steps">
+      <div class="conf-step"><div class="cs-dot"></div>Notificação registrada com data e hora</div>
+      <div class="conf-step"><div class="cs-dot"></div>TST tem prazo de 24h para iniciar o RIA</div>
+      <div class="conf-step"><div class="cs-dot"></div>Investigação concluída em até 3 dias úteis</div>
+      <div class="conf-step"><div class="cs-dot"></div>Encerramento apenas após validação de eficácia das ações</div>
+      <div class="conf-step" id="cs-grave" style="display:none"><div class="cs-dot" style="background:var(--red)"></div><strong style="color:var(--red)">Grave / Fatal — acionar CGG por telefone imediatamente</strong></div>
+    </div>
+    <div class="conf-export">
+      <div class="conf-export-title">Exportar registro</div>
+      <div class="conf-export-sub">Escolha o formato. O Excel acumula todos os formulários preenchidos neste dispositivo. O PDF gera o relatório formatado deste envio.</div>
+      <div class="conf-btns" style="flex-direction:column;gap:10px">
+        <button class="btn-exp btn-exp-primary" style="width:100%;padding:13px;font-size:14px" onclick="exportXLSX()">
+          📊 Baixar planilha Excel (.xlsx)
+        </button>
+        <button class="btn-exp btn-exp-ghost" style="width:100%;padding:13px;font-size:14px;border:1.5px solid var(--line)" onclick="abrirPDF()">
+          📄 Gerar relatório PDF
+        </button>
+      </div>
+    </div>
+    <button class="btn-novo" onclick="location.reload()">Preencher novo formulário</button>
+  </div>
+</div>
+
+<!-- ── JANELA DE RELATÓRIO PDF ── -->
+<div id="pdf-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;width:min(96vw,680px);max-height:92vh;overflow-y:auto;padding:0" id="pdf-frame">
+
+    <div id="pdf-content" style="padding:32px 36px;font-family:'Plus Jakarta Sans',sans-serif;color:#0F172A;font-size:13px;line-height:1.6">
+
+      <!-- cabeçalho -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:3px solid #001F6B;margin-bottom:20px">
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#64748B;text-transform:uppercase;margin-bottom:4px">SENAC RONDÔNIA · SST</div>
+          <div style="font-size:20px;font-weight:700;color:#001F6B">Formulário de Notificação Interna</div>
+          <div style="font-size:12px;color:#64748B;margin-top:2px">FNI — Comunicação de Acidente de Trabalho</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:#64748B;margin-bottom:3px">Protocolo</div>
+          <div style="font-family:monospace;font-size:15px;font-weight:700;color:#001F6B" id="pdf-proto">—</div>
+          <div style="font-size:10px;color:#64748B;margin-top:4px" id="pdf-data-envio">—</div>
+        </div>
+      </div>
+
+      <!-- badge gravidade -->
+      <div id="pdf-badge-wrap" style="margin-bottom:20px"></div>
+
+      <!-- bloco 1 -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2563EB;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0">1. Identificação do notificante</div>
+        <div id="pdf-b1" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px"></div>
+      </div>
+
+      <!-- bloco 2 -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2563EB;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0">2. Colaborador envolvido</div>
+        <div id="pdf-b2" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px"></div>
+      </div>
+
+      <!-- bloco 3 -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2563EB;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0">3. Dados do ocorrido</div>
+        <div id="pdf-b3" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px"></div>
+      </div>
+
+      <!-- bloco 4 — descrição full width -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2563EB;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0">4. O que aconteceu</div>
+        <div id="pdf-b4"></div>
+      </div>
+
+      <!-- bloco 5 -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2563EB;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0">5. Lesão e gravidade</div>
+        <div id="pdf-b5" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px"></div>
+      </div>
+
+      <!-- bloco 6 -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#2563EB;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0">6. Atendimento e evidências</div>
+        <div id="pdf-b6" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px"></div>
+      </div>
+
+      <!-- assinaturas -->
+      <div style="margin-top:28px;padding-top:16px;border-top:1px solid #E2E8F0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px">
+        <div>
+          <div style="border-top:1px solid #0F172A;margin-bottom:4px;padding-top:6px;font-size:11px;color:#64748B;text-align:center">Notificante</div>
+        </div>
+        <div>
+          <div style="border-top:1px solid #0F172A;margin-bottom:4px;padding-top:6px;font-size:11px;color:#64748B;text-align:center">Gestor da Unidade</div>
+        </div>
+        <div>
+          <div style="border-top:1px solid #0F172A;margin-bottom:4px;padding-top:6px;font-size:11px;color:#64748B;text-align:center">Técnico de SST</div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;padding:10px 14px;background:#F0F4FF;border-radius:8px;font-size:11px;color:#64748B;text-align:center">
+        Documento gerado pelo sistema FNI · SENAC Rondônia · PRO-SST-IAA-001<br>
+        Versão controlada disponível no SharePoint: /SST/FNI/
+      </div>
+    </div>
+
+    <!-- botões da janela PDF -->
+    <div style="display:flex;gap:10px;padding:16px 36px 24px;border-top:1px solid #E2E8F0">
+      <button onclick="imprimirPDF()" style="flex:1;padding:13px;background:#001F6B;color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">
+        🖨️ Imprimir / Salvar como PDF
+      </button>
+      <button onclick="fecharPDF()" style="padding:13px 20px;background:#F1F5F9;color:#334155;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbz1Hgh2c4a-f4pHd6hZtM7DDiANSkxIfESRz7VP2kfRtP3GQpBlr_gkAWco-1XHhv0/exec'
-    const form = document.getElementById('meu-formulario')
+let cur = 1;
+let grav = '';
+let files = [];
+let dadosEnviados = null;
 
-    form.addEventListener('submit', e => {
-        e.preventDefault()
-        document.getElementById('btn-enviar').disabled = true
-        document.getElementById('btn-enviar').innerText = "Enviando..."
+function proto() {
+  const d = new Date();
+  const p = `FNI-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${Math.floor(Math.random()*9000)+1000}`;
+  document.getElementById('proto-top').textContent = p;
+  document.getElementById('conf-num').textContent  = p;
+  return p;
+}
 
-        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-            .then(response => {
-                alert('Dados enviados com sucesso!')
-                form.reset()
-                document.getElementById('btn-enviar').disabled = false
-                document.getElementById('btn-enviar').innerText = "Enviar para Planilha"
-            })
-            .catch(error => console.error('Erro!', error.message))
-    })
+const P = proto();
+
+function updateNav() {
+  for (let i = 1; i <= 6; i++) {
+    const s = document.getElementById('ps'+i);
+    s.className = 'prog-seg' + (i < cur ? ' done' : i === cur ? ' active' : '');
+  }
+  document.getElementById('btn-back').style.display = cur > 1 ? '' : 'none';
+  const nb = document.getElementById('btn-next');
+  nb.textContent = cur === 6 ? 'Enviar notificação ✓' : 'Continuar';
+  nb.className   = cur === 6 ? 'btn btn-send' : 'btn btn-next';
+}
+
+function goSec(n) {
+  document.getElementById('sec'+cur).classList.add('hidden');
+  cur = n;
+  document.getElementById('sec'+cur).classList.remove('hidden');
+  updateNav();
+  document.getElementById('scroll').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validate() {
+  const g = (id) => { const e = document.getElementById(id); return e && e.value && e.value.trim() !== ''; };
+  const r = (nm) => !!document.querySelector(`input[name="${nm}"]:checked`);
+  const errs = [];
+  if (cur === 1) {
+    if (!g('f1-nome')) errs.push('Informe seu nome');
+    if (!r('papel'))   errs.push('Selecione seu papel');
+    if (!g('f1-tel'))  errs.push('Informe seu telefone');
+  }
+  if (cur === 2) {
+    if (!g('f2-nome'))    errs.push('Informe o nome do colaborador');
+    if (!g('f2-cpf'))     errs.push('Informe o CPF do colaborador');
+    if (!g('f2-mat'))     errs.push('Informe a matrícula do colaborador');
+    if (!g('f2-unidade')) errs.push('Selecione a unidade');
+    if (!g('f2-funcao'))  errs.push('Informe a função');
+  }
+  if (cur === 3) {
+    if (!g('f3-data'))  errs.push('Informe a data');
+    if (!g('f3-hora'))  errs.push('Informe a hora');
+    if (!r('tipo'))     errs.push('Selecione o tipo de ocorrência');
+    if (!g('f3-local')) errs.push('Informe o local');
+    if (!g('f3-ativ'))  errs.push('Informe a atividade');
+  }
+  if (cur === 4) {
+    if (!g('f4-como')) errs.push('Selecione como aconteceu');
+    if (!g('f4-desc')) errs.push('Descreva o que aconteceu');
+  }
+  if (cur === 5) {
+    if (!r('lesao'))  errs.push('Indique se houve lesão');
+    if (!grav)        errs.push('Selecione a gravidade');
+    if (!r('afast'))  errs.push('Indique se houve afastamento do trabalho');
+  }
+  if (errs.length) { alert('Atenção:\n\n' + errs.map(e => '• '+e).join('\n')); return false; }
+  return true;
+}
+
+function next() {
+  if (!validate()) return;
+  if (cur < 6) { goSec(cur + 1); return; }
+  enviar();
+}
+function back() { if (cur > 1) goSec(cur - 1); }
+
+function radio(el, nm) {
+  document.querySelectorAll(`.pill input[name="${nm}"]`).forEach(i => i.closest('.pill').classList.remove('sel','sel-warn','sel-danger'));
+  el.classList.add('sel');
+  el.querySelector('input').checked = true;
+}
+function check(el) {
+  el.classList.toggle('sel');
+  el.querySelector('input').checked = el.classList.contains('sel');
+}
+function toggleCond(id, show) {
+  document.getElementById(id).style.display = show ? 'block' : 'none';
+}
+function sev(el, code) {
+  document.querySelectorAll('.sev-card').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel');
+  grav = code;
+  document.getElementById('alert-grave').style.display = (code === 'gra' || code === 'fat') ? 'block' : 'none';
+}
+function handleFiles(input) {
+  const fl = document.getElementById('flist');
+  Array.from(input.files).slice(0, 5 - files.length).forEach(f => {
+    files.push(f.name);
+    const d = document.createElement('div');
+    d.className = 'fitem';
+    d.innerHTML = `<span>📄 ${f.name}</span><span class="frem" onclick="rmFile(this,'${f.name}')">✕</span>`;
+    fl.appendChild(d);
+  });
+}
+function rmFile(el, nm) {
+  files = files.filter(f => f !== nm);
+  el.parentElement.remove();
+}
+
+function getData() {
+  const r = nm => { const e = document.querySelector(`input[name="${nm}"]:checked`); return e ? e.closest('.pill').querySelector('.pill-label').textContent.trim() : '—'; };
+  const c = nm => Array.from(document.querySelectorAll(`input[name="${nm}"]:checked`)).map(e => e.value).join(', ') || '—';
+  const v = id => { const e = document.getElementById(id); return e ? (e.value||'—').trim() : '—'; };
+  const gmap = {inc:'Incidente',lev:'Leve',mod:'Moderado',gra:'Grave',fat:'Fatal'};
+  return { protocolo:P, dataEnvio:new Date().toLocaleString('pt-BR'),
+    nomeNot:v('f1-nome'), papel:r('papel'), tel:v('f1-tel'),
+    nomeCol:v('f2-nome'), cpf:v('f2-cpf'), matricula:v('f2-mat'),
+    unidade:v('f2-unidade'), funcao:v('f2-funcao'), tempo:v('f2-tempo'),
+    data:v('f3-data'), hora:v('f3-hora'), tipo:r('tipo'), local:v('f3-local'), ativ:v('f3-ativ'),
+    como:v('f4-como'), desc:v('f4-desc'), epi:r('epi'), epiDesc:v('f4-epi'),
+    lesao:r('lesao'), corpo:c('corpo'), tipoLesao:v('f5-tipo'), gravidade:gmap[grav]||'—',
+    afastamento:r('afast'),
+    atend:r('atend'), localAt:v('f6-local-at'), intern:v('f6-intern'), samu:v('f6-samu'),
+    isol:r('isol'), test:r('test'), t1:v('f6-t1'), t2:v('f6-t2'),
+    fotos:files.join(', ')||'Nenhum', obs:v('f6-obs') };
+}
+
+function enviar() {
+  dadosEnviados = getData();
+  try {
+    const reg = JSON.parse(localStorage.getItem('fni_registros') || '[]');
+    reg.push(dadosEnviados);
+    localStorage.setItem('fni_registros', JSON.stringify(reg));
+  } catch(e) {}
+  document.getElementById('cs-grave').style.display = (grav === 'gra' || grav === 'fat') ? 'flex' : 'none';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('conf-screen').style.display = 'flex';
+  window.scrollTo(0, 0);
+}
+
+// ── EXCEL ────────────────────────────────────────────────────────────────────
+function exportXLSX() {
+  const cabecalhos = [
+    'Protocolo','Data de Envio',
+    'Nome Notificante','Papel Notificante','Telefone Notificante',
+    'Nome Colaborador','CPF','Matrícula','Unidade','Função','Tempo na Função',
+    'Data Acidente','Hora Acidente','Tipo Ocorrência','Local','Atividade no Momento',
+    'Como Aconteceu','Descrição do Ocorrido','EPI em Uso','EPI Necessário',
+    'Houve Lesão','Parte do Corpo','Tipo de Lesão','Gravidade','Houve Afastamento',
+    'Atendimento Médico','Local Atendimento','Internação','SAMU/Bombeiros',
+    'Área Isolada','Testemunhas','Testemunha 1','Testemunha 2',
+    'Arquivos Anexados','Observações'
+  ];
+
+  // Carrega histórico do localStorage + registro atual
+  let historico = [];
+  try { historico = JSON.parse(localStorage.getItem('fni_registros') || '[]'); } catch(e) {}
+  if (historico.length === 0 && dadosEnviados) historico = [dadosEnviados];
+
+  const linhas = historico.map(d => [
+    d.protocolo, d.dataEnvio,
+    d.nomeNot, d.papel, d.tel,
+    d.nomeCol, d.cpf, d.matricula, d.unidade, d.funcao, d.tempo,
+    d.data, d.hora, d.tipo, d.local, d.ativ,
+    d.como, d.desc, d.epi, d.epiDesc,
+    d.lesao, d.corpo, d.tipoLesao, d.gravidade, d.afastamento,
+    d.atend, d.localAt, d.intern, d.samu,
+    d.isol, d.test, d.t1, d.t2,
+    d.fotos, d.obs
+  ]);
+
+  const wb = XLSX.utils.book_new();
+
+  // Aba 1 — Registros
+  const wsData = [cabecalhos, ...linhas];
+  const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // Larguras de coluna
+  ws['!cols'] = [
+    {wch:22},{wch:18},
+    {wch:26},{wch:24},{wch:18},
+    {wch:28},{wch:16},{wch:12},{wch:22},{wch:20},{wch:16},
+    {wch:14},{wch:10},{wch:20},{wch:32},{wch:28},
+    {wch:34},{wch:50},{wch:22},{wch:24},
+    {wch:14},{wch:36},{wch:18},{wch:12},{wch:22},
+    {wch:20},{wch:24},{wch:12},{wch:18},
+    {wch:22},{wch:14},{wch:28},{wch:28},
+    {wch:24},{wch:40}
+  ];
+
+  // Estilo do cabeçalho (fundo azul)
+  const headerRange = XLSX.utils.decode_range(ws['!ref']);
+  for (let C = headerRange.s.c; C <= headerRange.e.c; C++) {
+    const addr = XLSX.utils.encode_cell({ r: 0, c: C });
+    if (!ws[addr]) continue;
+    ws[addr].s = {
+      fill: { fgColor: { rgb: '001F6B' } },
+      font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
+      alignment: { wrapText: true, vertical: 'center' }
+    };
+  }
+
+  // Congelar primeira linha
+  ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Registros FNI');
+
+  // Aba 2 — Legenda / Referência S-2210
+  const leg = [
+    ['Campo FNI', 'Campo S-2210 (eSocial)', 'Observação'],
+    ['Protocolo','—','Referência interna do FNI'],
+    ['CPF','CPF do trabalhador','Obrigatório no S-2210'],
+    ['Matrícula','Matrícula do trabalhador','Obrigatório no S-2210'],
+    ['Data Acidente','dtAcid — Data do acidente','Obrigatório no S-2210'],
+    ['Hora Acidente','hrAcid — Hora do acidente','Obrigatório no S-2210'],
+    ['Tipo Ocorrência','tpAcid — 1=Típico, 2=Trajeto, 3=Doença','Converter para código numérico'],
+    ['Houve Afastamento','indAfast — Sim/Não','Obrigatório no S-2210'],
+    ['Parte do Corpo','codParteAting — Tabela 13 do eSocial','TST converte para código'],
+    ['Como Aconteceu','codAgntCausador — Tabela 14 do eSocial','TST converte para código — a partir de 22/01/2024 usar apenas Tabela 14 para típico/trajeto'],
+    ['Houve Lesão','—','Orienta preenchimento da CAT'],
+    ['Tipo de Lesão','codSitGeradora — Tabela 15 do eSocial','TST converte para código'],
+    ['Gravidade','—','Orienta nível de urgência'],
+    ['Atendimento Médico','indCatObito / dados médico','CRM e nome do médico coletados na CAT física'],
+    ['Testemunha 1/2','—','Campos opcionais no S-2210 — auxiliam em processo trabalhista'],
+  ];
+  const wsLeg = XLSX.utils.aoa_to_sheet(leg);
+  wsLeg['!cols'] = [{wch:24},{wch:38},{wch:54}];
+  for (let C = 0; C <= 2; C++) {
+    const addr = XLSX.utils.encode_cell({ r: 0, c: C });
+    if (!wsLeg[addr]) continue;
+    wsLeg[addr].s = { fill: { fgColor: { rgb: '185FA5' } }, font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 } };
+  }
+  XLSX.utils.book_append_sheet(wb, wsLeg, 'Referência S-2210');
+
+  XLSX.writeFile(wb, `FNI_SENAC_RO_${P}.xlsx`);
+}
+
+// ── PDF ───────────────────────────────────────────────────────────────────────
+function campo(label, valor) {
+  return `<div style="margin-bottom:6px"><div style="font-size:10px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1px">${label}</div><div style="font-size:13px;color:#0F172A;font-weight:500">${valor || '—'}</div></div>`;
+}
+
+function abrirPDF() {
+  const d = dadosEnviados || getData();
+
+  document.getElementById('pdf-proto').textContent = d.protocolo;
+  document.getElementById('pdf-data-envio').textContent = 'Enviado em: ' + d.dataEnvio;
+
+  // Badge de gravidade
+  const cores = { Incidente:'#4F46E5', Leve:'#16A34A', Moderado:'#D97706', Grave:'#DC2626', Fatal:'#7F1D1D' };
+  const cor = cores[d.gravidade] || '#64748B';
+  document.getElementById('pdf-badge-wrap').innerHTML =
+    `<span style="display:inline-block;background:${cor};color:#fff;font-size:12px;font-weight:700;padding:5px 16px;border-radius:20px;letter-spacing:.04em">▲ GRAVIDADE: ${d.gravidade || '—'}</span>`;
+
+  // Bloco 1
+  document.getElementById('pdf-b1').innerHTML =
+    campo('Nome do notificante', d.nomeNot) +
+    campo('Papel no ocorrido', d.papel) +
+    campo('Telefone', d.tel);
+
+  // Bloco 2
+  document.getElementById('pdf-b2').innerHTML =
+    campo('Nome do colaborador', d.nomeCol) +
+    campo('CPF', d.cpf) +
+    campo('Matrícula', d.matricula) +
+    campo('Unidade', d.unidade) +
+    campo('Cargo / Função', d.funcao) +
+    campo('Tempo na função', d.tempo);
+
+  // Bloco 3
+  document.getElementById('pdf-b3').innerHTML =
+    campo('Data do acidente', d.data) +
+    campo('Hora', d.hora) +
+    campo('Tipo de ocorrência', d.tipo) +
+    campo('Local', d.local) +
+    campo('Atividade no momento', d.ativ);
+
+  // Bloco 4 — descrição full width
+  document.getElementById('pdf-b4').innerHTML =
+    campo('Como aconteceu', d.como) +
+    `<div style="margin-top:8px"><div style="font-size:10px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Descrição narrativa</div>
+     <div style="font-size:13px;color:#0F172A;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 12px;line-height:1.7;white-space:pre-wrap">${d.desc || '—'}</div></div>` +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-top:8px">' +
+    campo('EPI em uso', d.epi) +
+    campo('EPI necessário', d.epiDesc) +
+    '</div>';
+
+  // Bloco 5
+  document.getElementById('pdf-b5').innerHTML =
+    campo('Houve lesão?', d.lesao) +
+    campo('Parte(s) do corpo', d.corpo) +
+    campo('Tipo de lesão', d.tipoLesao) +
+    campo('Gravidade', d.gravidade) +
+    campo('Houve afastamento?', d.afastamento);
+
+  // Bloco 6
+  document.getElementById('pdf-b6').innerHTML =
+    campo('Atendimento médico', d.atend) +
+    campo('Local de atendimento', d.localAt) +
+    campo('Internação hospitalar', d.intern) +
+    campo('SAMU / Bombeiros', d.samu) +
+    campo('Área isolada', d.isol) +
+    campo('Testemunhas', d.test) +
+    campo('Testemunha 1', d.t1) +
+    campo('Testemunha 2', d.t2) +
+    campo('Arquivos anexados', d.fotos) +
+    `<div style="grid-column:1/-1">${campo('Observações', d.obs)}</div>`;
+
+  document.getElementById('pdf-overlay').style.display = 'flex';
+}
+
+function imprimirPDF() {
+  const conteudo = document.getElementById('pdf-content').innerHTML;
+  const janela = window.open('', '_blank', 'width=800,height=900');
+  janela.document.write(`<!DOCTYPE html><html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <title>FNI · SENAC RO · ${P}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'Plus Jakarta Sans', sans-serif; color: #0F172A; font-size: 13px; padding: 32px 40px; }
+      @page { size: A4; margin: 20mm 18mm; }
+      @media print {
+        body { padding: 0; }
+        button { display: none !important; }
+      }
+    </style>
+  </head><body>${conteudo}
+    <div style="margin-top:24px;text-align:center">
+      <button onclick="window.print()" style="padding:10px 28px;background:#001F6B;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-right:10px">Imprimir / Salvar PDF</button>
+      <button onclick="window.close()" style="padding:10px 20px;background:#F1F5F9;color:#334155;border:none;border-radius:8px;font-size:14px;cursor:pointer">Fechar</button>
+    </div>
+  </body></html>`);
+  janela.document.close();
+  janela.focus();
+  setTimeout(() => janela.print(), 800);
+}
+
+function fecharPDF() {
+  document.getElementById('pdf-overlay').style.display = 'none';
+}
+
+function fmtCPF(el) {
+  let v = el.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+  else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+  else if (v.length > 3) v = v.replace(/(\d{3})(\d{0,3})/, '$1.$2');
+  el.value = v;
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  const d = new Date();
+  document.getElementById('f3-data').value = d.toISOString().split('T')[0];
+  document.getElementById('f3-hora').value = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  updateNav();
+});
 </script>
-
-
 </body>
 </html>
