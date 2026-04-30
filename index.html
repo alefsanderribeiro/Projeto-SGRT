@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Formulário</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background-color: #f4f4f9; }
+        form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 300px; }
+        div { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 10px; background-color: #2ea44f; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #2c974b; }
+    </style>
+</head>
+<body>
+
+    <form action="https://formspree.io" method="POST">
+        <h2>Cadastro Simples</h2>
+        <div>
+            <label>Nome:</label>
+            <input type="text" name="nome" required>
+        </div>
+        <div>
+            <label>Idade:</label>
+            <input type="number" name="idade" required>
+        </div>
+        <button type="submit">Enviar Informações</button>
+    </form>
+
+</body>
+</html>
